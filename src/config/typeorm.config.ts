@@ -1,3 +1,5 @@
+// typeorm.config.ts
+
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { Board } from "src/boards/board.entity";
 import { BoardsModule } from "src/boards/boards.module";

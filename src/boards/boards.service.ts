@@ -60,6 +60,14 @@ export class BoardsService {
     //     return found;
     // }
 
+    async deleteBoard(id: number): Promise<void> {
+        const result = await this.boardRepository.delete(id);
+
+        if(result.affected === 0) { // 0 이면 없고 1이면 있는거
+            throw new NotFoundException(`Can't find Board with id ${id}`);
+        }
+    }
+
     // deleteBoard(id: string): void {
     //     const found = this.getBoardId(id);
     //     this.boards = this.boards.filter((board) => board.id !== found.id); 
