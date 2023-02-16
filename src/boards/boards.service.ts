@@ -43,7 +43,7 @@ export class BoardsService {
     // }
     
     async getBoardById(id: number | any ): Promise <Board> {
-        const found = await this.boardRepository.findOne(id);
+        const found = await this.boardRepository.findOneBy({id}); // error 
 
         if(!found) {
             throw new NotFoundException(`Can't find Board with id ${id}`);
@@ -72,6 +72,14 @@ export class BoardsService {
     //     const found = this.getBoardId(id);
     //     this.boards = this.boards.filter((board) => board.id !== found.id); 
     // }
+
+    async updateBoardStatus(id: number , status: BoardStatus): Promise<Board> {
+        const board = await this.getBoardById(id);
+        board.status = status;
+        await this.boardRepository.save(board);
+
+        return board;
+    }
 
     // updateBoardStatus(id: string, status: BoardStatus): Board {
     //     const board = this.getBoardId(id);
