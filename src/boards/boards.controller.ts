@@ -9,7 +9,7 @@ import { Board } from './board.entity';
 export class BoardsController {
     constructor(private boardsService: BoardsService) { }
 
-    @Get()
+    @Get('/')
     getAllBoard(): Promise<Board[]> {
         return this.boardsService.getAllBoards();
     }
