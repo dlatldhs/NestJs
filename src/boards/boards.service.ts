@@ -37,19 +37,6 @@ export class BoardsService {
         await this.boardRepository.save(board); // db 에 저장
         return board;
     }
-
-    // createBoard(createBoardDto: CreateBoardDto) {
-    //     const {title , description } = createBoardDto
-    //     const board: Board = {
-    //         id : uuid(),
-    //         title: title,
-    //         description: description,
-    //         status: BoardStatus.PUBLIC,
-    //     }
-        
-    //     this.boards.push(board);
-    //     return board;
-    // }
     
     async getBoardById(id: number | any ): Promise <Board> {
         const found = await this.boardRepository.findOneBy({id}); // error 
@@ -60,27 +47,23 @@ export class BoardsService {
         
         return found;
     }
-    // getBoardId(id: string): Board {
-    //     const found = this.boards.find((board) => board.id === id );
 
-    //     if (!found) {
-    //         throw new NotFoundException(`Can't find Board with id ${id}`);
-    //     }
-    //     return found;
-    // }
+    async deleteBoard(id: number, user:User): Promise<void> {
+        // const result = await this.boardRepository.delete(id);
+        // const result = await this.boardRepository.createQueryBuilder('board')
+        // .leftJoin('board.user','user') // sql LEFT JOIN 과 같은 역할
+        // .where('board.id = :id', {id} )
+        // .andWhere('user.id = :id', {id: user.id})
+        // .delete()
+        // .execute();
+        const result = this.boardRepository.createQueryBuilder('board');
+        result.where('board.userId = :userId && board.id = :id',{ userId: user.id , id: id });
+        result.getMany();
 
-    async deleteBoard(id: number): Promise<void> {
-        const result = await this.boardRepository.delete(id);
-
-        if(result.affected === 0) { // 0 이면 없고 1이면 있는거
-            throw new NotFoundException(`Can't find Board with id ${id}`);
-        }
+        // if(result.affected === 0) { // 0 이면 없고 1이면 있는거
+        //     throw new NotFoundException(`Can't find Board with id ${id}`);
+        // }
     }
-
-    // deleteBoard(id: string): void {
-    //     const found = this.getBoardId(id);
-    //     this.boards = this.boards.filter((board) => board.id !== found.id); 
-    // }
 
     async updateBoardStatus(id: number , status: BoardStatus): Promise<Board> {
         const board = await this.getBoardById(id);
@@ -89,10 +72,4 @@ export class BoardsService {
 
         return board;
     }
-
-    // updateBoardStatus(id: string, status: BoardStatus): Board {
-    //     const board = this.getBoardId(id);
-    //     board.status = status;
-    //     return board;
-    // }
 }
