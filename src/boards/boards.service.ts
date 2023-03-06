@@ -5,6 +5,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardRepository } from './board.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './board.entity';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class BoardsService {
@@ -13,20 +14,24 @@ export class BoardsService {
         private boardRepository: BoardRepository,
     ) {}
 
-    async getAllBoards(): Promise <Board[]> { // 모두니까 [] 형태
-        return this.boardRepository.find();
-    }
-    // getAllBoards():Board[] {
-    //     return this.boards;
-    // }
+    async getAllBoards(user:User): Promise <Board[]> { // 모두니까 [] 형태
+        const query = this.boardRepository.createQueryBuilder('board');
 
-    async createBoard(createBoardDto: CreateBoardDto): Promise <Board> {
+        query.where('board.userId = :userId', { userId: user.id });
+
+        const boards = await query.getMany();
+
+        return boards
+    }
+
+    async createBoard(createBoardDto: CreateBoardDto , user:User): Promise <Board> {
         const {title,description} = createBoardDto;
 
         const board = this.boardRepository.create({
             title,
             description,
-            status: BoardStatus.PUBLIC
+            status: BoardStatus.PUBLIC,
+            user
         })
 
         await this.boardRepository.save(board); // db 에 저장
